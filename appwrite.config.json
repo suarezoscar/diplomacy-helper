@@ -1,0 +1,97 @@
+{
+  "projectId": "6a198d760032c2e8db69",
+  "endpoint": "https://fra.cloud.appwrite.io/v1",
+  "tablesDB": [
+    {
+      "$id": "6a19b8050037bbd0060c",
+      "name": "diplomacy-db",
+      "enabled": true
+    }
+  ],
+  "tables": [
+    {
+      "$id": "games",
+      "databaseId": "6a19b8050037bbd0060c",
+      "name": "games",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")"
+      ],
+      "columns": [
+        { "key": "code", "type": "varchar", "size": 6, "required": true },
+        { "key": "name", "type": "varchar", "size": 255, "required": true },
+        { "key": "status", "type": "varchar", "size": 50, "required": true },
+        { "key": "current_round", "type": "integer", "required": true },
+        { "key": "power_mode", "type": "varchar", "size": 50, "required": true },
+        { "key": "max_players", "type": "integer", "required": true },
+        { "key": "created_by", "type": "varchar", "size": 255, "required": true }
+      ]
+    },
+    {
+      "$id": "players",
+      "databaseId": "6a19b8050037bbd0060c",
+      "name": "players",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")"
+      ],
+      "columns": [
+        { "key": "game_id", "type": "varchar", "size": 255, "required": true },
+        { "key": "name", "type": "varchar", "size": 255, "required": true },
+        { "key": "user_id", "type": "varchar", "size": 255, "required": true },
+        { "key": "secret", "type": "varchar", "size": 255, "required": true },
+        { "key": "power", "type": "varchar", "size": 50, "required": false }
+      ]
+    },
+    {
+      "$id": "rounds",
+      "databaseId": "6a19b8050037bbd0060c",
+      "name": "rounds",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")"
+      ],
+      "columns": [
+        { "key": "game_id", "type": "varchar", "size": 255, "required": true },
+        { "key": "round_number", "type": "integer", "required": true },
+        { "key": "status", "type": "varchar", "size": 50, "required": true },
+        { "key": "phase", "type": "varchar", "size": 50, "required": true }
+      ]
+    },
+    {
+      "$id": "orders",
+      "databaseId": "6a19b8050037bbd0060c",
+      "name": "orders",
+      "enabled": true,
+      "rowSecurity": false,
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")",
+        "delete(\"users\")"
+      ],
+      "columns": [
+        { "key": "round_id", "type": "varchar", "size": 255, "required": true },
+        { "key": "player_id", "type": "varchar", "size": 255, "required": true },
+        { "key": "player_name", "type": "varchar", "size": 255, "required": true },
+        { "key": "power", "type": "varchar", "size": 50, "required": true },
+        { "key": "order_type", "type": "varchar", "size": 50, "required": true },
+        { "key": "unit_type", "type": "varchar", "size": 50, "required": true },
+        { "key": "origin", "type": "varchar", "size": 10, "required": true },
+        { "key": "target", "type": "varchar", "size": 10, "required": false },
+        { "key": "supported_unit", "type": "varchar", "size": 255, "required": false },
+        { "key": "supported_action", "type": "varchar", "size": 50, "required": false },
+        { "key": "status", "type": "varchar", "size": 50, "required": true }
+      ]
+    }
+  ]
+}
