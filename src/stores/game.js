@@ -36,6 +36,11 @@ export const useGameStore = defineStore('game', () => {
     return players.value.filter((p) => p.power).map((p) => p.power)
   })
 
+  const allPowersAssigned = computed(() => {
+    if (players.value.length < 2) return false
+    return players.value.every((p) => p.power)
+  })
+
   const availablePowers = computed(() => {
     return POWERS.filter((p) => !assignedPowers.value.includes(p.id))
   })
@@ -103,6 +108,7 @@ export const useGameStore = defineStore('game', () => {
     myPlayer,
     myPower,
     allConfirmed,
+    allPowersAssigned,
     assignedPowers,
     availablePowers,
     setGame,

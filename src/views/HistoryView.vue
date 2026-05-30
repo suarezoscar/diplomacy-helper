@@ -122,7 +122,7 @@ function goBack() { router.push(`/game/${gameCode.value}/play`) }
                 <span class="text-xs text-text-muted">{{ order.player_name }}</span>
               </div>
               <p class="font-mono text-sm text-text mb-1.5">{{ formatOrder(order) }}</p>
-              <div v-if="!order.raw_text" class="flex gap-2 text-xs text-text-muted">
+               <div v-if="!order.raw_text" class="flex gap-2 text-xs text-text-muted">
                 <span>{{ orderIcon(order.order_type) }} {{ order.order_type }}</span>
                 <span>&middot;</span>
                 <span>{{ unitIcon(order.unit_type) }} {{ order.unit_type }}</span>

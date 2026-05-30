@@ -73,6 +73,8 @@ onMounted(async () => {
 })
 
 const isCreator = computed(() => gameStore.isCreator)
+const allPowersReady = computed(() => gameStore.allPowersAssigned)
+
 const myPowerInfo = computed(() => {
   const p = gameStore.myPlayer
   if (!p || !p.power) return null
@@ -198,10 +200,11 @@ function handleLeave() { playerStore.clear(); router.push('/') }
 
           <PowerAssignment v-if="showPowerAssignment" @assign="handleAssignPowers" />
 
-          <button @click="handleStartGame" :disabled="gameStore.players.length < 2" class="btn-primary w-full py-3.5 text-base">
+          <button @click="handleStartGame" :disabled="gameStore.players.length < 2 || !allPowersReady" class="btn-primary w-full py-3.5 text-base">
             {{ t('lobby.startGame') }}
             <span class="block text-xs opacity-70 mt-0.5 font-normal">
               <template v-if="gameStore.players.length < 2">{{ t('lobby.needAtLeast2') }}</template>
+              <template v-else-if="!allPowersReady">{{ t('lobby.assignAllPowers') }}</template>
               <template v-else>{{ format('lobby.playersReady', { current: gameStore.players.length, max: gameStore.game?.max_players || 7 }) }}</template>
             </span>
           </button>

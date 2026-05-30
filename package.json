@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "test:e2e": "start-server-and-test dev http://localhost:5173 'cypress run'",
+    "test:e2e:open": "start-server-and-test dev http://localhost:5173 'cypress open'"
   },
   "dependencies": {
     "@appwrite.io/pink-icons": "^1.0.0",
@@ -24,13 +26,17 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitejs/plugin-vue-jsx": "^4.1.1",
     "@vue/eslint-config-prettier": "^10.2.0",
+    "cypress": "^15.16.0",
     "eslint": "^9.20.1",
     "eslint-plugin-vue": "^9.32.0",
     "prettier": "^3.5.1",
+    "start-server-and-test": "^3.0.5",
     "vite": "^6.1.0",
     "vite-plugin-vue-devtools": "^7.7.2"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

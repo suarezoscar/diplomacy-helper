@@ -51,6 +51,7 @@ function removeOrder(index) { orders.value.splice(index, 1) }
 
 async function handleConfirmGuided() {
   if (orders.value.length === 0) { error.value = t('game.addAtLeastOne'); return }
+  if (!gameStore.currentRound) { error.value = 'No active round'; return }
   saving.value = true; error.value = ''
   try {
     for (const order of orders.value) {
@@ -76,6 +77,7 @@ async function handleConfirmGuided() {
 async function handleConfirmText() {
   const lines = rawText.value.split('\n').map(l => l.trim()).filter(l => l.length > 0)
   if (lines.length === 0) { error.value = t('game.writeAtLeastOne'); return }
+  if (!gameStore.currentRound) { error.value = 'No active round'; return }
   saving.value = true; error.value = ''
   try {
     for (const line of lines) {
@@ -140,7 +142,7 @@ function orderNotation(order) {
       >
         <div class="min-w-0 flex-1">
           <p class="font-mono text-sm text-text">{{ orderNotation(order) }}</p>
-          <p v-if="!order.raw_text" class="text-xs text-text-muted mt-0.5 flex items-center gap-1.5 flex-wrap">
+           <p v-if="!order.raw_text" class="text-xs text-text-muted mt-0.5 flex items-center gap-1.5 flex-wrap">
             <span>{{ orderIcon(order.order_type) }} {{ tOrderType(order.order_type) }}</span>
             <span>&middot;</span>
             <span>{{ unitIcon(order.unit_type) }} {{ tUnitType(order.unit_type) }}</span>
