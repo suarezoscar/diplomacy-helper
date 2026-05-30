@@ -13,9 +13,12 @@ const playerStore = usePlayerStore()
 const gameStore = useGameStore()
 const { saveOrder, deleteOrder, getMyOrders } = useOrders()
 
+const mode = ref('text')
 const orders = ref([])
 const error = ref('')
 const saving = ref(false)
+
+const rawText = ref('')
 
 const showTarget = computed(() => ['move', 'support', 'convoy'].includes(currentOrder.value.order_type))
 const showSupportedUnit = computed(() => ['support', 'convoy'].includes(currentOrder.value.order_type))
@@ -46,7 +49,7 @@ function addOrder() {
 
 function removeOrder(index) { orders.value.splice(index, 1) }
 
-async function handleConfirmAll() {
+async function handleConfirmGuided() {
   if (orders.value.length === 0) { error.value = t('game.addAtLeastOne'); return }
   saving.value = true; error.value = ''
   try {
@@ -70,20 +73,63 @@ async function handleConfirmAll() {
   } catch (e) { error.value = e.message } finally { saving.value = false }
 }
 
+async function handleConfirmText() {
+  const lines = rawText.value.split('\n').map(l => l.trim()).filter(l => l.length > 0)
+  if (lines.length === 0) { error.value = t('game.writeAtLeastOne'); return }
+  saving.value = true; error.value = ''
+  try {
+    for (const line of lines) {
+      await saveOrder({
+        round_id: gameStore.currentRound.$id,
+        player_id: playerStore.playerId,
+        player_name: playerStore.playerName,
+        power: gameStore.myPower || '',
+        order_type: 'raw',
+        unit_type: 'raw',
+        origin: 'RAW',
+        target: null,
+        supported_unit: null,
+        supported_action: null,
+        raw_text: line,
+        status: 'confirmed',
+      })
+    }
+    rawText.value = ''
+    await getMyOrders(gameStore.currentRound.$id, playerStore.playerId)
+  } catch (e) { error.value = e.message } finally { saving.value = false }
+}
+
 async function handleDeleteOrder(orderDoc) {
   try { await deleteOrder(orderDoc.$id); await getMyOrders(gameStore.currentRound.$id, playerStore.playerId) } catch (e) { error.value = e.message }
 }
 
 function orderNotation(order) {
-  return formatOrder({ order_type: order.order_type, unit_type: order.unit_type, origin: order.origin, target: order.target, supported_unit: order.supported_unit, supported_action: order.supported_action })
+  return formatOrder(order)
 }
 </script>
 
 <template>
   <div>
-    <h3 class="text-sm text-text-secondary mb-3 ml-1 flex items-center gap-2">
-      <span>📜</span> {{ t('game.yourOrders') }}
-    </h3>
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-sm text-text-secondary flex items-center gap-2">
+        <span>📜</span> {{ t('game.yourOrders') }}
+      </h3>
+      <div class="flex rounded-lg border border-border overflow-hidden">
+        <button
+          @click="mode = 'text'"
+          class="text-xs px-3 py-1.5 transition-colors"
+          :class="mode === 'text' ? 'bg-accent text-white' : 'text-text-muted hover:text-text'"
+        >📝 {{ t('game.rawTextMode') }}</button>
+        <button
+          @click="mode = 'guided'"
+          class="text-xs px-3 py-1.5 transition-colors flex items-center gap-1"
+          :class="mode === 'guided' ? 'bg-accent text-white' : 'text-text-muted hover:text-text'"
+        >
+          🧩 {{ t('game.guided') }}
+          <span class="tag ml-1 text-[10px] px-1 py-0 leading-tight" :class="mode === 'guided' ? 'bg-white/20 text-white' : 'bg-warning/20 text-warning'">α</span>
+        </button>
+      </div>
+    </div>
 
     <div v-if="gameStore.myOrders.length > 0" class="space-y-2 mb-4">
       <div
@@ -94,7 +140,7 @@ function orderNotation(order) {
       >
         <div class="min-w-0 flex-1">
           <p class="font-mono text-sm text-text">{{ orderNotation(order) }}</p>
-          <p class="text-xs text-text-muted mt-0.5 flex items-center gap-1.5 flex-wrap">
+          <p v-if="!order.raw_text" class="text-xs text-text-muted mt-0.5 flex items-center gap-1.5 flex-wrap">
             <span>{{ orderIcon(order.order_type) }} {{ tOrderType(order.order_type) }}</span>
             <span>&middot;</span>
             <span>{{ unitIcon(order.unit_type) }} {{ tUnitType(order.unit_type) }}</span>
@@ -104,13 +150,30 @@ function orderNotation(order) {
           </p>
         </div>
         <div class="flex items-center gap-2 shrink-0 ml-3">
-          <span class="tag tag-success">\u2705 {{ t('game.confirmed') }}</span>
+          <span class="tag tag-success">✅ {{ t('game.confirmed') }}</span>
           <button @click="handleDeleteOrder(order)" class="btn-ghost !text-error">{{ t('game.delete') }}</button>
         </div>
       </div>
     </div>
 
-    <div class="card-elevated p-4 space-y-4">
+    <div v-if="mode === 'text'" class="card-elevated p-4 space-y-3">
+      <textarea
+        v-model="rawText"
+        :placeholder="t('game.writeOrdersHint')"
+        rows="8"
+        class="w-full font-mono text-sm resize-y"
+      ></textarea>
+      <p v-if="error" class="text-xs text-error">{{ error }}</p>
+      <button @click="handleConfirmText" :disabled="saving" class="btn-primary w-full py-3.5 text-base">
+        {{ saving ? t('game.saving') : t('game.confirmAllOrders') }}
+      </button>
+    </div>
+
+    <div v-if="mode === 'guided'" class="card-elevated p-4 space-y-4">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="tag tag-warning text-[10px] px-1.5 py-0.5">α ALPHA</span>
+        <span class="text-[10px] text-text-muted">{{ t('game.alphaWarning') }}</span>
+      </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-xs text-text-muted mb-1 ml-1">{{ t('game.orderType') }}</label>
@@ -172,7 +235,7 @@ function orderNotation(order) {
             @click="currentOrder.supported_action = 'move'"
             class="text-xs py-2 rounded-lg border transition-all"
             :class="currentOrder.supported_action === 'move' ? 'border-accent bg-accent/10 text-text' : 'border-border text-text-muted'"
-          >\u2192 {{ t('game.move') }}</button>
+          >→ {{ t('game.move') }}</button>
           <button
             @click="currentOrder.supported_action = 'hold'"
             class="text-xs py-2 rounded-lg border transition-all"
@@ -201,7 +264,7 @@ function orderNotation(order) {
       </button>
     </div>
 
-    <div v-if="orders.length > 0" class="mt-4 space-y-2.5">
+    <div v-if="mode === 'guided' && orders.length > 0" class="mt-4 space-y-2.5">
       <h4 class="text-xs text-text-muted ml-1 flex items-center gap-1.5">
         <span>📝</span> {{ t('game.pendingOrders') }}
       </h4>
@@ -220,7 +283,7 @@ function orderNotation(order) {
         <button @click="removeOrder(idx)" class="btn-ghost !text-error shrink-0 ml-3">{{ t('game.remove') }}</button>
       </div>
 
-      <button @click="handleConfirmAll" :disabled="saving" class="btn-primary w-full py-3.5 text-base">
+      <button @click="handleConfirmGuided" :disabled="saving" class="btn-primary w-full py-3.5 text-base">
         {{ saving ? t('game.saving') : t('game.confirmAllOrders') }}
       </button>
     </div>

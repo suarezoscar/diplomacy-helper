@@ -106,6 +106,8 @@ export function getPower(id) {
 }
 
 export function formatOrder(order) {
+  if (order.raw_text) return order.raw_text
+
   const unit = order.unit_type === 'army' ? 'A' : 'F'
   const origin = order.origin
 

@@ -45,10 +45,11 @@ export function useOrders() {
       return await databases.updateDocument(dbId, 'orders', orderData.$id, {
         order_type: orderData.order_type,
         unit_type: orderData.unit_type,
-        origin: orderData.origin,
+        origin: orderData.origin || '',
         target: orderData.target || null,
         supported_unit: orderData.supported_unit || null,
         supported_action: orderData.supported_action || null,
+        raw_text: orderData.raw_text || null,
         status: orderData.status || 'draft',
       })
     }
@@ -59,10 +60,11 @@ export function useOrders() {
       power: orderData.power,
       order_type: orderData.order_type,
       unit_type: orderData.unit_type,
-      origin: orderData.origin,
+      origin: orderData.origin || '',
       target: orderData.target || null,
       supported_unit: orderData.supported_unit || null,
       supported_action: orderData.supported_action || null,
+      raw_text: orderData.raw_text || null,
       status: orderData.status || 'draft',
     })
   }

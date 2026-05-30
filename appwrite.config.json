@@ -90,6 +90,7 @@
         { "key": "target", "type": "varchar", "size": 10, "required": false },
         { "key": "supported_unit", "type": "varchar", "size": 255, "required": false },
         { "key": "supported_action", "type": "varchar", "size": 50, "required": false },
+        { "key": "raw_text", "type": "varchar", "size": 4096, "required": false },
         { "key": "status", "type": "varchar", "size": 50, "required": true }
       ]
     }

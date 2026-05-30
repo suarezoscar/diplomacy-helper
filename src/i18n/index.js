@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue'
+import { ref } from 'vue'
 
 const STORAGE_KEY = 'app_lang'
 
@@ -95,6 +95,11 @@ const messages = {
       nextRound: 'Ronda siguiente',
       creatingRound: 'Creando...',
       waitingCreatorReveal: 'Esperando a que el creador revele las órdenes...',
+      rawTextMode: 'Texto libre',
+      guided: 'Guiado',
+      writeOrdersHint: 'Escribe tus órdenes, una por línea.\nEjemplo:\nA VIE - BUD\nA GAL S A VIE - BUD\nF TRI H',
+      writeAtLeastOne: 'Escribe al menos una orden',
+      alphaWarning: 'Esta funcionalidad está en fase alpha y puede contener errores.',
       back: 'Atrás',
       backToGame: 'Volver a la partida',
     },
@@ -247,6 +252,11 @@ const messages = {
       nextRound: 'Next Round',
       creatingRound: 'Creating...',
       waitingCreatorReveal: 'Waiting for the creator to reveal orders...',
+      rawTextMode: 'Free Text',
+      guided: 'Guided',
+      writeOrdersHint: 'Write your orders, one per line.\nExample:\nA VIE - BUD\nA GAL S A VIE - BUD\nF TRI H',
+      writeAtLeastOne: 'Write at least one order',
+      alphaWarning: 'This feature is in alpha and may contain errors.',
       back: 'Back',
       backToGame: 'Back to game',
     },
